@@ -10,6 +10,13 @@ import java.util.List;
 public class ProductUseCase implements ProductPort {
     @Override
     public List<Product> getSimilarProducts(Long productId) {
-        return null;
+        return List.of(
+                Product.builder()
+                        .id(1L)
+                        .name("Product 1")
+                        .price(10.0)
+                        .available(true)
+                        .build()
+        );
     }
 }

@@ -5,10 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ProductDTO {
+public class ProductDetail {
     private Long id;
     private String name;
-    private String description;
-    private double price;
-    private boolean available;
+    private Double price;
+    private Boolean available;
 }
