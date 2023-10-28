@@ -1,2 +1,5 @@
 server:
   port: 5000
+
+api:
+  url: http://localhost:3001
