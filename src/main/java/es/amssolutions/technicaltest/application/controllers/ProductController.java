@@ -1,6 +1,7 @@
 package es.amssolutions.technicaltest.application.controllers;
 
 import es.amssolutions.technicaltest.application.contracts.ProductApiContract;
+import es.amssolutions.technicaltest.application.exceptions.NoSimilarProductsFoundException;
 import es.amssolutions.technicaltest.application.mappers.ProductMapper;
 import es.amssolutions.technicaltest.application.models.ProductDetail;
 import es.amssolutions.technicaltest.domain.ports.application.ProductPort;
@@ -18,8 +19,14 @@ public class ProductController implements ProductApiContract {
 
     @Override
     public List<ProductDetail> getSimilarProducts(Long productId) {
-        return productPort.getSimilarProducts(productId).stream()
+        List<ProductDetail> productDetails = productPort.getSimilarProducts(productId).stream()
                 .map(productMapper::toProductDetail)
                 .toList();
+
+        if (productDetails.isEmpty()) {
+            throw new NoSimilarProductsFoundException("No similar products found for productId: " + productId);
+        } else {
+            return productDetails;
+        }
     }
 }
