@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriUtils;
 
+import javax.sound.midi.Soundbank;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +35,16 @@ public class ProductRestClient {
         ResponseEntity<List<Long>> response = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {
         });
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return SimilarProductsRP.builder()
-                    .similarProductsIds(response.getBody())
-                    .build();
-        } else {
-            throw new RuntimeException("Error getting similar products");
+        try {
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return SimilarProductsRP.builder()
+                        .similarProductsIds(response.getBody())
+                        .build();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -48,12 +53,17 @@ public class ProductRestClient {
                 .path("/product/{productId}");
         URI uri = componentsBuilder.buildAndExpand(Map.of("productId", productId)).toUri();
 
-        ResponseEntity<ProductRP> response = restTemplate.getForEntity(uri, ProductRP.class);
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
-        } else {
-            throw new RuntimeException("Error getting product");
+        try {
+            ResponseEntity<ProductRP> response = restTemplate.getForEntity(uri, ProductRP.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return response.getBody();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
         }
+
+
     }
 }

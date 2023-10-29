@@ -3,6 +3,7 @@ package es.amssolutions.technicaltest.infrastructure.adapters;
 import es.amssolutions.technicaltest.domain.models.Product;
 import es.amssolutions.technicaltest.domain.ports.infrastructure.ProductDatasourcePort;
 import es.amssolutions.technicaltest.infrastructure.mappers.ProductDatasourceMapper;
+import es.amssolutions.technicaltest.infrastructure.models.ProductRP;
 import es.amssolutions.technicaltest.infrastructure.services.ProductRestClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,12 @@ public class ProductAdapter implements ProductDatasourcePort {
 
     @Override
     public Optional<Product> findSimilarProduct(Long productId) {
-        return Optional.ofNullable(productDatasourceMapper.toProduct(productRestClient.getProduct(productId)));
+        ProductRP productRP = productRestClient.getProduct(productId);
+
+        if (productRP == null) {
+            return Optional.empty();
+        } else {
+            return Optional.ofNullable(productDatasourceMapper.toProduct(productRP));
+        }
     }
 }
