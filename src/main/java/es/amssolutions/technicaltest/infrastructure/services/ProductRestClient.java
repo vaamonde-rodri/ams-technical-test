@@ -32,10 +32,9 @@ public class ProductRestClient {
                 .path("/product/{productId}/similarids");
         URI uri = componentsBuilder.buildAndExpand(Map.of("productId", productId)).toUri();
 
-        ResponseEntity<List<Long>> response = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-        });
-
         try {
+            ResponseEntity<List<Long>> response = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+            });
             if (response.getStatusCode().is2xxSuccessful()) {
                 return SimilarProductsRP.builder()
                         .similarProductsIds(response.getBody())
