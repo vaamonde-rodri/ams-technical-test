@@ -13,7 +13,7 @@ public interface ProductDatasourceMapper {
                 .id(Long.valueOf(productRP.getId()))
                 .name(productRP.getName())
                 .price(productRP.getPrice())
-                .available(productRP.getAvailable())
+                .available(productRP.getAvailability())
                 .build();
     }
 }

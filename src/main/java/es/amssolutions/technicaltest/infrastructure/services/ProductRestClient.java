@@ -4,10 +4,18 @@ import es.amssolutions.technicaltest.infrastructure.models.ProductRP;
 import es.amssolutions.technicaltest.infrastructure.models.SimilarProductsRP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProductRestClient {
@@ -19,25 +27,28 @@ public class ProductRestClient {
     RestTemplate restTemplate;
 
     public SimilarProductsRP getSimilarProducts(Long productId) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
-                .path("/products/{productId}/similar")
-                .queryParam("productId", productId);
+        UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromHttpUrl(apiUrl)
+                .path("/product/{productId}/similarids");
+        URI uri = componentsBuilder.buildAndExpand(Map.of("productId", productId)).toUri();
 
-        ResponseEntity<SimilarProductsRP> response = restTemplate.getForEntity(builder.toUriString(), SimilarProductsRP.class);
+        ResponseEntity<List<Long>> response = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+        });
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
+            return SimilarProductsRP.builder()
+                    .similarProductsIds(response.getBody())
+                    .build();
         } else {
             throw new RuntimeException("Error getting similar products");
         }
     }
 
     public ProductRP getProduct(Long productId) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
-                .path("/products/{productId}")
-                .queryParam("productId", productId);
+        UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromHttpUrl(apiUrl)
+                .path("/product/{productId}");
+        URI uri = componentsBuilder.buildAndExpand(Map.of("productId", productId)).toUri();
 
-        ResponseEntity<ProductRP> response = restTemplate.getForEntity(builder.toUriString(), ProductRP.class);
+        ResponseEntity<ProductRP> response = restTemplate.getForEntity(uri, ProductRP.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             return response.getBody();
